@@ -50,7 +50,7 @@ const AddRoomModal = ({
     }
     return (
         <>
-            <Modal confirmLoading={isConfirmLoading} width={800} closable={true} title="Thêm mới user" open={isOpen} onOk={handleOk} onCancel={handleCancel}>
+            <Modal confirmLoading={isConfirmLoading} width={800} closable={true} title="Thêm mới phòng" open={isOpen} onOk={handleOk} onCancel={handleCancel}>
                 <Form
                     form={form}
                     layout="vertical"
