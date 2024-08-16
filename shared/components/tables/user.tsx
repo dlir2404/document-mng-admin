@@ -6,6 +6,7 @@ import { formatDate } from "../../utils/formatDate";
 import { SearchOutlined } from "@ant-design/icons";
 import { debounce } from "lodash";
 import AddUserModal from "../modals/add-user";
+import AddUserToRoomModal from "../modals/add-user-to-room";
 
 interface IUser {
     id: number;
@@ -19,7 +20,8 @@ interface IUser {
     dateOfBirth: string;
     address: string;
     phone: string;
-    email: string
+    email: string;
+    room: any;
 }
 
 export enum UserRole {
@@ -40,7 +42,9 @@ const UserTable = () => {
 
     const appContext = useAppContext()
     const [page, setPage] = useState(1)
+    const [user, setUser] = useState<IUser | undefined>()
     const [addUserModal, setAddUserModal] = useState(false)
+    const [addUserToRoom, setAddUserToRoom] = useState(false)
     const [query, setQuery] = useState<string | undefined>()
     const { data: users, isLoading, refetch } = useGetUsers({
         page: page || 10,
@@ -83,6 +87,12 @@ const UserTable = () => {
             key: 'title'
         },
         {
+            title: 'Phòng ban',
+            dataIndex: 'room',
+            key: 'room',
+            render: (value: any) => <p>{value?.name}</p>
+        },
+        {
             title: 'Giới tính',
             dataIndex: 'gender',
             key: 'gender',
@@ -111,6 +121,20 @@ const UserTable = () => {
             dataIndex: 'email',
             key: 'email'
         },
+        {
+            title: 'Hành động',
+            key: 'action',
+            render: (_, record) => {
+                if (record.room) return ''
+                if (record.role !== UserRole.SPECIALIST) return ''
+                return (
+                    <Button onClick={() => {
+                        setUser(record)
+                        setAddUserToRoom(true)
+                    }}>Thêm vào phòng</Button>
+                )
+            }
+        },
     ]
 
     return (
@@ -137,6 +161,9 @@ const UserTable = () => {
             ></Table>
             {addUserModal && (
                 <AddUserModal isOpen={addUserModal} setIsOpen={setAddUserModal} onOk={() => refetch()}></AddUserModal>
+            )}
+            {addUserToRoom && (
+                <AddUserToRoomModal userId={user?.id} isOpen={addUserToRoom} setIsOpen={setAddUserToRoom} onOk={() => refetch()}></AddUserToRoomModal>
             )}
         </div>
     )
